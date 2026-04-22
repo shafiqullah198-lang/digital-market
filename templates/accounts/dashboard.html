@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-6">
+
+    <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
+
+    <!-- SUMMARY CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+
+
+        <div class="bg-white rounded-xl shadow p-6">
+            <p class="text-gray-500">Purchases</p>
+            <p class="text-3xl font-bold">{{ purchases.count }}</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6">
+            <p class="text-gray-500">Sales</p>
+            <p class="text-3xl font-bold">{{ sales.count }}</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6">
+            <p class="text-gray-500">Earnings</p>
+            <p class="text-3xl font-bold text-green-600">${{ earnings }}</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6">
+            <p class="text-gray-500">Available Balance</p>
+            <p class="text-3xl font-bold text-indigo-600">
+                ${{ profile.available_balance|default:0 }}
+            </p>
+        </div>
+
+    </div>
+    <!-- PAYMENT METHOD CARD -->
+<div class="bg-white rounded-xl shadow p-4">
+    <h3 class="text-gray-500 text-sm">Payout Method</h3>
+
+    {% if profile.payout_method %}
+        <p class="text-lg font-semibold capitalize">
+            {{ profile.payout_method }}
+        </p>
+
+        <p class="text-sm text-gray-600">
+            {{ profile.account_title }}
+        </p>
+
+        <p class="text-sm text-gray-600">
+            {{ profile.account_number }}
+        </p>
+
+        {% if profile.iban %}
+        <p class="text-sm text-gray-600">
+            IBAN: {{ profile.iban }}
+        </p>
+        {% endif %}
+
+        <button onclick="togglePayout()" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm">
+    Add / Edit
+</button>
+
+
+    {% else %}
+    <p class="text-red-500 text-sm">No payment method added</p>
+    <button onclick="togglePayout()"
+            class="bg-indigo-600 text-white px-3 py-1 rounded text-sm">
+        Add Now
+    </button>
+{% endif %}
+
+</div>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+
+        <!-- BUYER PURCHASES -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Your Purchases</h2>
+
+            {% for order in purchases %}
+                <div class="flex justify-between border-b py-3">
+                    <div>
+                        <p class="font-medium">{{ order.product.title }}</p>
+                        <p class="text-sm text-gray-500">${{ order.product.price }}</p>
+                    </div>
+
+                    <a href="{% url 'download_project' order.product.id %}"
+                       class="text-indigo-600 font-medium">
+                       Download
+                    </a>
+                </div>
+            {% empty %}
+                <p class="text-gray-400">No purchases yet</p>
+            {% endfor %}
+        </div>
+
+        <!-- SELLER PRODUCTS -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Your Products</h2>
+
+            {% for product in seller_products %}
+                <div class="flex justify-between border-b py-3">
+                    <p>{{ product.title }}</p>
+                    <span class="text-gray-500">${{ product.price }}</span>
+                </div>
+            {% empty %}
+                <p class="text-gray-400">You haven't uploaded products</p>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <!-- WITHDRAWALS -->
+    <div class="bg-white rounded-xl shadow p-6 mt-10">
+        <h2 class="text-xl font-semibold mb-4">Withdrawals</h2>
+        <!-- Withdraw History -->
+        <div class="space-y-3 mb-6">
+
+            {% for w in withdrawals %}
+                <div class="flex justify-between items-center border-b pb-3">
+
+                    <div>
+                        <p class="font-medium">${{ w.amount }}</p>
+                        <p class="text-sm text-gray-500">
+                            {{ w.created_at|date:"d M Y" }}
+                        </p>
+                    </div>
+
+                    {% if w.status == "pending" %}
+                        <span class="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded-full">
+                            Pending
+                        </span>
+                    {% elif w.status == "approved" %}
+                        <span class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full">
+                            Paid
+                        </span>
+                    {% else %}
+                        <span class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-full">
+                            Rejected
+                        </span>
+                    {% endif %}
+
+                </div>
+            {% empty %}
+                <p class="text-gray-400">No withdrawals yet</p>
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Withdraw Request Form -->
+        <div class="border-t pt-6">
+            <h3 class="font-semibold mb-3">Request Withdrawal</h3>
+
+            <form method="post" action="{% url 'withdraw_request' %}" class="flex gap-3">
+                {% csrf_token %}
+
+                <input type="number"
+                       step="0.01"
+                       min="1"
+                       name="amount"
+                       placeholder="Enter amount"
+                       class="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+                       required>
+
+                <button type="submit"
+                        class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                    Withdraw
+                </button>
+            </form>
+
+            <p class="text-sm text-gray-500 mt-2">
+                Available balance: ${{ profile.available_balance|default:0 }}
+            </p>
+        </div>
+
+    </div>
+</div>
+    </div>   <!-- Withdraw section end -->
+
+
+    <!-- Payout Modal -->
+    <div id="payoutModal" class="fixed inset-0 bg-black/40 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white p-6 rounded-xl w-[420px] shadow-xl relative">
+
+                <button onclick="togglePayout()"
+                        class="absolute top-2 right-3 text-gray-500 text-xl">
+                    ✕
+                </button>
+
+                <h2 class="text-lg font-semibold mb-4">Payout Settings</h2>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <button type="submit"
+                            class="bg-indigo-600 text-white px-4 py-2 rounded mt-3 w-full">
+                        Save Details
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function togglePayout(){
+        document.getElementById("payoutModal").classList.toggle("hidden");
+    }
+    </script>
+
+</div>
+
+
+{% endblock %}
+
+
+       

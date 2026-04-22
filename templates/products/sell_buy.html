@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Sell & Buy | DigiMarket{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Sell & Buy Digital Projects</h1>
+            <p class="text-xl text-gray-600 mb-12">Everything you need to succeed in the digital marketplace.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Sell Section -->
+                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-8 rounded-3xl">
+                    <div class="w-20 h-20 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-upload text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Sell Your Projects</h2>
+                    <p class="text-gray-600 mb-6">Upload your digital products and reach thousands of potential buyers.</p>
+                    <a href="/sell/" class="inline-block btn-primary text-white px-8 py-3 rounded-lg font-bold">
+                        Start Selling
+                    </a>
+                </div>
+                
+                <!-- Buy Section -->
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-3xl">
+                    <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-shopping-cart text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Buy Quality Projects</h2>
+                    <p class="text-gray-600 mb-6">Browse thousands of digital products from talented creators.</p>
+                    <a href="/products/" class="inline-block bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-3 rounded-lg font-bold">
+                        Browse Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DigiMarket - Digital Projects Marketplace{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --accent: #06d6a0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Active navigation state */
+        .active-nav {
+            color: #7c3aed;
+            border-bottom: 2px solid #7c3aed;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-2">
+                    <div class="w-9 h-9 gradient-bg rounded-lg flex items-center justify-center">
+                        <i class="fas fa-cube text-white"></i>
+                    </div>
+                    <span class="text-lg font-bold text-gray-800">DigiMarket</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="nav-link font-medium text-gray-700 hover:text-indigo-600 transition py-2 {% if request.path == '/' or request.path == '' %}active-nav{% endif %}">Home</a>
+                    <a href="/products" class="nav-link font-medium text-gray-700 hover:text-indigo-600 transition py-2 {% if request.path == '/products' %}active-nav{% endif %}">Products</a>
+                    <a href="/sell-buy" class="nav-link font-medium text-gray-700 hover:text-indigo-600 transition py-2 {% if request.path == '/sell-buy' %}active-nav{% endif %}">Sell & Buy</a>
+                </div>
+                
+                <!-- User Menu -->
+              
+<div class="flex items-center space-x-3">
+
+    {% if user.is_authenticated %}
+        <span class="hidden md:inline-block text-gray-700 font-medium">
+            Hi, {{ user.username }}
+        </span>
+       <a href="/dashboard/" class="hidden md:inline-block font-medium text-gray-700 hover:text-indigo-600">
+        Dashboard
+    </a>
+      <button onclick="toggleCart()" class="relative text-gray-700 hover:text-indigo-600">
+    <i class="fas fa-shopping-cart text-lg"></i>
+
+    {% if cart_count > 0 %}
+    <span id="cartCount"
+      class="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full {% if cart_count == 0 %}hidden{% endif %}">
+    {{ cart_count }}
+</span>
+
+    {% endif %}
+</button>
+
+
+
+        <form method="post" action="{% url 'logout' %}" class="hidden md:inline-block">
+    {% csrf_token %}
+    <button type="submit" class="text-red-600 font-medium">
+        Logout
+    </button>
+</form>
+
+    {% else %}
+        <a href="{% url 'login' %}" class="hidden md:inline-block text-gray-700 font-medium hover:text-indigo-600">
+            Login
+        </a>
+
+        <a href="{% url 'signup' %}" class="hidden md:inline-block btn-primary text-white px-4 py-2 rounded-lg text-sm font-medium">
+            Sign Up
+        </a>
+    {% endif %}
+
+    <button id="mobileMenuButton" class="md:hidden text-gray-600">
+        <i class="fas fa-bars text-xl"></i>
+    </button>
+</div>
+
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 bg-white z-50 hidden">
+        <div class="flex flex-col h-full">
+            <div class="flex justify-between items-center p-4 border-b">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+                        <i class="fas fa-cube text-white"></i>
+                    </div>
+                    <span class="font-bold">DigiMarket</span>
+                </div>
+                <button id="closeMenu" class="text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="flex-1 p-6">
+<ul class="space-y-4">
+    <li><a href="/" class="block text-lg font-medium text-gray-700 py-2">Home</a></li>
+    <li><a href="/products" class="block text-lg font-medium text-gray-700 py-2">Products</a></li>
+    <li><a href="/sell-buy" class="block text-lg font-medium text-gray-700 py-2">Sell & Buy</a></li>
+
+    {% if user.is_authenticated %}
+        <li>
+   <button onclick="toggleCart()" class="relative text-gray-700 hover:text-indigo-600">
+    <i class="fas fa-shopping-cart text-lg"></i>
+
+    <span id="cartCount"
+          class="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full {% if cart_count == 0 %}hidden{% endif %}">
+        {{ cart_count }}
+    </span>
+</button>
+
+
+
+        </li>
+        <li>
+            <form method="post" action="{% url 'logout' %}" class="hidden md:inline-block">
+    {% csrf_token %}
+    <button type="submit" class="text-red-600 font-medium">
+        Logout
+    </button>
+</form>
+
+        </li>
+    {% else %}
+        <li>
+            <a href="{% url 'login' %}" class="block text-lg font-medium text-gray-700 py-2">
+                Login
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'signup' %}" class="block text-lg font-medium text-indigo-600 py-2">
+                Sign Up
+            </a>
+        </li>
+    {% endif %}
+</ul>
+
+                
+                <div class="mt-8 pt-6 border-t">
+                    <a href="/sell" class="block w-full btn-primary text-white px-4 py-3 rounded-lg text-center font-medium">
+                        <i class="fas fa-plus mr-2"></i> Sell Project
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+                            <i class="fas fa-cube text-white"></i>
+                        </div>
+                        <span class="font-bold">DigiMarket</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-2">Digital Marketplace for Projects</p>
+                </div>
+                <div class="text-gray-400 text-sm">
+                    © 2026 DigiMarket. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const closeMenu = document.getElementById('closeMenu');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.remove('hidden');
+                });
+            }
+            
+            if (closeMenu) {
+                closeMenu.addEventListener('click', function() {
+                    mobileMenu.classList.add('hidden');
+                });
+            }
+            
+            // Close menu when clicking outside
+            if (mobileMenu) {
+                mobileMenu.addEventListener('click', function(e) {
+                    if (e.target.id === 'mobileMenu') {
+                        this.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // Close menu when clicking on any mobile link
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+            
+            // Add click event to all buttons to prevent double-click issues
+            const buttons = document.querySelectorAll('form button[type="submit"]');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Prevent double submission
+                    if (this.classList.contains('clicked')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    this.classList.add('clicked');
+                    setTimeout(() => {
+                        this.classList.remove('clicked');
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+    <script>
+function toggleCart() {
+    document.getElementById('cartPanel').classList.toggle('hidden');
+}
+</script>
+
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        function getCSRFToken() {
+    let cookieValue = null;
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith('csrftoken=')) {
+            cookieValue = cookie.substring('csrftoken='.length);
+            break;
+        }
+    }
+    return cookieValue;
+}
+
+function addToCart(productId) {
+   fetch(`/cart/add/${productId}/`, {
+
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCSRFToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) return;
+
+        // update cart count badge
+        updateCartBadge(data.count);
+
+        // reload cart panel content
+        refreshCartPanel();
+    })
+    .catch(err => console.error(err));
+}
+
+function updateCartBadge(count) {
+    const badge = document.getElementById("cartCount");
+
+    if (!badge) return;
+
+    if (count > 0) {
+        badge.innerText = count;
+        badge.classList.remove("hidden");
+    } else {
+        badge.innerText = "";
+        badge.classList.add("hidden");
+        
+    }
+}
+
+
+function refreshCartPanel() {
+    fetch('/cart/panel/')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('cartPanelContent').innerHTML = html;
+        })
+        .catch(err => console.error(err));
+}
+
+
+
+function removeFromCart(itemId) {
+    fetch(`/cart/remove/${itemId}/`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) return;
+
+        updateCartBadge(data.count);
+        refreshCartPanel();
+    })
+    .catch(err => console.error(err));
+}
+
+</script>
+<!-- CART SLIDE PANEL -->
+<div id="cartPanel"
+     class="hidden fixed right-0 top-0 w-96 h-full bg-white shadow-xl z-50 overflow-y-auto">
+
+    <div class="p-6 border-b flex justify-between items-center">
+        <h2 class="text-xl font-bold">Your Cart</h2>
+        <button onclick="toggleCart()">✕</button>
+    </div>
+
+    <!-- 🔥 AJAX-REPLACED CONTENT -->
+    <div id="cartPanelContent">
+        {% include 'cart/cart_panel.html' %}
+    </div>
+
+</div>
+<!-- SUPPORT FLOAT BUTTON -->
+<div id="supportButton"
+     class="fixed bottom-6 right-6 z-50">
+
+    <button onclick="toggleSupport()"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-lg transition duration-300">
+        <i class="fas fa-headset text-xl"></i>
+    </button>
+
+</div>
+
+<!-- SUPPORT FLOAT BUTTON -->
+<div class="fixed bottom-6 right-6 z-50">
+
+    <!-- Floating Button -->
+    <button onclick="toggleSupport()"
+        class="w-14 h-14 bg-indigo-600 text-white rounded-full shadow-md hover:bg-indigo-700 transition flex items-center justify-center">
+        <i class="fas fa-headset"></i>
+    </button>
+
+    <!-- Support Popup -->
+    <div id="supportModal"
+         class="hidden absolute bottom-20 right-0 w-80 bg-white rounded-2xl shadow-xl border border-gray-200">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center px-5 py-4 border-b">
+            <h3 class="font-semibold text-gray-800">Support</h3>
+            <button onclick="toggleSupport()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-5 space-y-4">
+
+            <a href="mailto:support@digimarket.com"
+               class="block w-full text-center py-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                Email Support
+            </a>
+
+         <a id="whatsappSupport"
+   target="_blank"
+   class="block w-full text-center py-3 rounded-lg bg-green-500 text-white hover:bg-green-600 transition">
+    WhatsApp Chat
+</a>
+
+            <a href="/contact/"
+               class="block w-full text-center py-3 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                Contact Form
+            </a>
+
+        </div>
+    </div>
+
+</div>
+<script>
+function toggleSupport() {
+    const modal = document.getElementById("supportModal");
+    modal.classList.toggle("hidden");
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const username = "{{ user.username|default:'Guest' }}";
+    const productTitle = "{{ product.title|default:'' }}";
+    const orderId = "{{ order.id|default:'' }}";
+
+    let message = "Hi, I need assistance regarding my DigiMarket project.";
+
+    if (username !== "Guest") {
+        message += " My username: " + username + ".";
+    }
+
+    if (productTitle) {
+        message += " Product: " + productTitle + ".";
+    }
+
+    if (orderId) {
+        message += " Order ID: " + orderId + ".";
+    }
+
+    const encodedMessage = encodeURIComponent(message);
+
+    const phoneNumber = "923480235167";  // your WhatsApp number
+
+    const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+    document.getElementById("whatsappSupport").href = whatsappLink;
+
+});
+</script>
+
+
+</body>
+</html>

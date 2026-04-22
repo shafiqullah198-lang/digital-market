@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Sell & Buy Digital Projects | DigiMarket{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+
+    <!-- HERO SECTION -->
+    <div class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-16 md:py-24 text-center">
+
+            <span class="inline-block px-5 py-2 bg-white/20 rounded-full text-sm mb-6">
+                🚀 Trusted Digital Marketplace
+            </span>
+
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                Sell & Buy Digital Projects
+            </h1>
+
+            <p class="text-xl text-white/90 max-w-3xl mx-auto mb-10">
+                A modern marketplace for developers, designers, and creators.
+                Turn your ideas into income.
+            </p>
+
+            <div class="flex justify-center gap-6">
+                <a href="/products"
+                   class="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-xl font-semibold">
+                    Browse Products
+                </a>
+                <a href="/sell"
+                   class="bg-white text-indigo-700 px-8 py-4 rounded-xl font-semibold">
+                    Start Selling
+                </a>
+            </div>
+
+            <!-- STATS -->
+
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+
+    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl text-center">
+        <div class="text-4xl font-bold">
+            {{ total_products|default:0 }}+
+        </div>
+        <div class="text-white/80 mt-2">Digital Products</div>
+    </div>
+
+    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl text-center">
+        <div class="text-4xl font-bold">
+            {{ total_users|default:0 }}+
+        </div>
+        <div class="text-white/80 mt-2">Community Members</div>
+    </div>
+
+    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl text-center">
+        <div class="text-4xl font-bold">
+            ${{ total_paid|default:0 }}+
+        </div>
+        <div class="text-white/80 mt-2">Paid to Sellers</div>
+    </div>
+
+</div>
+ </div>
+</div>
+
+    <!-- HOW IT WORKS -->
+    <section class="py-20 gradient-bg text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-14">
+            How It Works
+        </h2>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div class="text-4xl mb-4">👤</div>
+                <h3 class="font-bold text-xl mb-2">Create Account</h3>
+                <p class="text-white/80">
+                    Sign up in minutes and join the community.
+                </p>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div class="text-4xl mb-4">🛒</div>
+                <h3 class="font-bold text-xl mb-2">Buy or Sell</h3>
+                <p class="text-white/80">
+                    Upload your work or browse quality projects.
+                </p>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <div class="text-4xl mb-4">💰</div>
+                <h3 class="font-bold text-xl mb-2">Get Paid</h3>
+                <p class="text-white/80">
+                    Secure payments with instant access.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+    <!-- CTA -->
+    <section class="py-16 bg-indigo-900 text-white text-center">
+        <h2 class="text-3xl font-bold mb-6">
+            Ready to Start?
+        </h2>
+        <a href="/sell"
+           class="bg-white text-indigo-900 px-10 py-4 rounded-xl font-bold">
+            Start Selling
+        </a>
+    </section>
+
+</div>
+
+<!-- ✅ CLEAN & FIXED COUNTER SCRIPT -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    function animateCounter(el, target, duration = 2000) {
+        target = parseInt(target) || 0;
+        let start = 0;
+        const step = target / (duration / 16);
+
+        function update() {
+            start += step;
+            if (start < target) {
+                el.textContent = Math.floor(start).toLocaleString();
+                requestAnimationFrame(update);
+            } else {
+                el.textContent = target.toLocaleString() + '+';
+            }
+        }
+        update();
+    }
+
+    document.querySelectorAll('.stat-counter').forEach((el, i) => {
+        setTimeout(() => {
+            animateCounter(el, el.dataset.target);
+        }, i * 300);
+    });
+
+});
+</script>
+
+{% endblock %}

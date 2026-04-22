@@ -1,0 +1,57 @@
+{% if cart and cart.items.all %}
+
+<div class="p-6 space-y-4">
+
+    {% for item in cart.items.all %}
+    <div class="flex items-center justify-between border-b pb-4 gap-4">
+
+        <!-- LEFT: product info -->
+        <div class="flex-1">
+            <p class="font-semibold text-gray-800">
+                {{ item.product.title }}
+            </p>
+            <p class="text-sm text-gray-500">
+                ${{ item.product.price }}
+            </p>
+        </div>
+
+        <!-- MIDDLE: quantity -->
+        <div class="flex items-center gap-2">
+            <button onclick="updateCart({{ item.id }}, 'dec')"
+                    class="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300">−</button>
+
+            <span class="min-w-[20px] text-center">
+                {{ item.quantity }}
+            </span>
+
+            <button onclick="updateCart({{ item.id }}, 'inc')"
+                    class="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300">+</button>
+        </div>
+
+        <!-- RIGHT: remove -->
+        <button onclick="removeFromCart({{ item.id }})"
+                class="text-red-600 text-sm hover:underline">
+            Remove
+        </button>
+
+    </div>
+    {% endfor %}
+
+    <div class="pt-4 font-bold text-lg text-right">
+        Total: ${{ cart_total }}
+    </div>
+
+    <a href="{% url 'proceed' %}"
+       class="block text-center mt-4 bg-indigo-600 text-white py-3 rounded-lg">
+        Proceed to Checkout
+    </a>
+
+</div>
+
+{% else %}
+
+<p class="p-6 text-gray-500 text-center">
+    Your cart is empty.
+</p>
+
+{% endif %}

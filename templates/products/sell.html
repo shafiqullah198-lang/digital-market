@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Sell Projects | DigiMarket{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 text-gray-800">Sell Your Digital Project</h1>
+            <p class="text-xl text-gray-600 mb-8">Share your creation with the world and earn money.</p>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <form method="post" enctype="multipart/form-data" action="{% url 'sell' %}">
+        {% csrf_token %}
+
+        <!-- TITLE -->
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Project Title</label>
+            <input type="text" name="title" required class="w-full border ..." >
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Description</label>
+            <textarea name="description" required class="w-full border ..."></textarea>
+        </div>
+
+        <!-- PRICE -->
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Price ($)</label>
+            <input type="number" name="price" step="0.01" required class="w-full border ...">
+        </div>
+
+        <!-- CATEGORY -->
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Category</label>
+            <select name="category" required class="w-full border ...">
+                <option value="web">Web Template</option>
+                <option value="mobile">Mobile App</option>
+                <option value="plugin">Plugin / Extension</option>
+                <option value="graphics">Graphics / Icons</option>
+                <option value="course">Course / Tutorial</option>
+            </select>
+        </div>
+
+        <!-- IMAGE -->
+        <div class="mb-8">
+            <label class="block text-gray-700 font-medium mb-2">Image</label>
+            <input type="file" name="image">
+        </div>
+        <!-- PROJECT ZIP FILE -->
+<div class="mb-8">
+    <label class="block text-gray-700 font-medium mb-2">
+        Upload Project ZIP
+    </label>
+
+    <input type="file"
+           name="project_file"
+           accept=".zip"
+           required
+           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+
+    <p class="text-sm text-gray-500 mt-1">
+        Only .zip files are allowed.
+    </p>
+</div>
+
+        <!-- BUTTONS -->
+        <div class="flex items-center justify-between">
+            <a href="/" class="border border-gray-300 px-8 py-3 rounded-lg">Cancel</a>
+            <button type="submit" class="btn-primary px-8 py-3 rounded-lg">
+                Publish Project
+            </button>
+        </div>
+    </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Payment | DigiMarket{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+
+            <!-- Card -->
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+
+                <!-- Title -->
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+                    Pay via Easypaisa
+                </h2>
+
+                <!-- Payment Info -->
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-6 mb-8 text-center">
+                    <p class="text-lg mb-2">Send payment to:</p>
+                    <p class="text-2xl font-bold tracking-wide">
+                        📱 0348-0235167
+                    </p>
+                </div>
+
+                <!-- Instructions -->
+                <p class="text-gray-600 mb-6 text-center">
+                    After sending the payment, upload your transaction screenshot below.
+                </p>
+
+                <!-- Form -->
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">
+                            Upload Payment Screenshot
+                        </label>
+
+                        <input type="file"
+                               name="screenshot"
+                               required
+                               class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit"
+                                class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition">
+                            Submit Payment
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

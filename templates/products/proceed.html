@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Proceed | DigiMarket{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-6">Order Summary</h1>
+
+    <div class="bg-white rounded-xl shadow p-6">
+        {% if cart_items %}
+    {% for item in cart_items %}
+        <div class="flex justify-between mb-4 border-b pb-2">
+            <div>
+                <p class="font-semibold">{{ item.product.title }}</p>
+                <p class="text-sm text-gray-500">
+                    ${{ item.product.price }} × {{ item.quantity }}
+                </p>
+            </div>
+            <div class="font-bold">
+                ${{ item.product.price|floatformat:2 }}
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="text-right mt-6 text-xl font-bold">
+        Total: ${{ total }}
+    </div>
+
+{% else %}
+    <p class="text-gray-500">Your cart is empty.</p>
+{% endif %}
+
+        <div class="flex justify-between mt-6 text-xl font-bold">
+            
+            
+        </div>
+
+ <a href="{% url 'payment' %}"
+   class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 inline-block">
+    Pay Now
+</a>
+
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}

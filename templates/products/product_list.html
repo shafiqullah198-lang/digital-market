@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Browse Digital Products | DigiMarket{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50">
+   <!-- PREMIUM HERO SECTION -->
+<div class="relative overflow-hidden">
+
+    <!-- Background Gradient -->
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-900
+
+"></div>
+
+    <!-- Soft Glow Effect -->
+    <div class="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+
+    <div class="relative container mx-auto px-6 py-20 text-center text-white">
+
+        <!-- Headline -->
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            Discover Premium <br>
+            <span class="bg-white text-indigo-700 px-4 py-1 rounded-xl inline-block mt-2">
+                Digital Projects
+            </span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+            Buy and sell high-quality templates, apps, systems, and digital assets from creators worldwide.
+        </p>
+
+        <!-- Search Bar -->
+        <form method="get"
+              class="max-w-3xl mx-auto bg-white/20 backdrop-blur-lg rounded-2xl p-2 flex items-center shadow-xl border border-white/20">
+
+            <div class="flex-1 flex items-center px-4">
+                <i class="fas fa-search text-white/80 mr-3"></i>
+                <input type="text"
+                       name="q"
+                       value="{{ request.GET.q }}"
+                       placeholder="Search templates, apps, systems..."
+                       class="w-full bg-transparent text-white placeholder-white/70 focus:outline-none py-4">
+            </div>
+
+            <button class="bg-white text-indigo-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition">
+                Search
+            </button>
+        </form>
+
+        <!-- Stats -->
+        <div class="flex justify-center flex-wrap gap-6 mt-12">
+
+            <div class="bg-white/10 backdrop-blur-md px-6 py-4 rounded-xl border border-white/20">
+                <p class="text-3xl font-bold">{{ total_products }}</p>
+                <p class="text-white/80 text-sm">Products</p>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-md px-6 py-4 rounded-xl border border-white/20">
+                <p class="text-3xl font-bold">{{ sellers_count }}</p>
+                <p class="text-white/80 text-sm">Sellers</p>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-md px-6 py-4 rounded-xl border border-white/20">
+                <p class="text-3xl font-bold">24/7</p>
+                <p class="text-white/80 text-sm">Live Marketplace</p>
+            </div>
+
+        </div>
+
+        <!-- CTA Button -->
+        <div class="mt-12">
+            <a href="/sell/"
+               class="inline-block bg-white text-indigo-700 px-10 py-4 rounded-xl font-bold text-lg hover:scale-105 transition transform shadow-lg">
+                🚀 Start Selling Today
+            </a>
+        </div>
+
+    </div>
+</div>
+
+
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row gap-8"> 
+            <!-- Sidebar Filters -->
+            <div class="lg:w-1/4">
+                <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+    <h3 class="font-bold text-lg mb-6 text-gray-800">Filters</h3>
+
+    <!-- ✅ FILTER FORM -->
+    <form method="get">
+
+        <!-- Categories -->
+        <div class="mb-8">
+            <h4 class="font-medium text-gray-700 mb-4">Categories</h4>
+
+            <div class="space-y-2">
+                {% for key, label in categories %}
+                <label class="flex items-center">
+                    <input type="checkbox"
+                           name="category"
+                           value="{{ key }}"
+                           {% if key in selected_categories %}checked{% endif %}
+                           class="rounded text-indigo-600 mr-3">
+                    <span class="text-gray-600">{{ label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Price Range -->
+        <div class="mb-8">
+            <h4 class="font-medium text-gray-700 mb-4">Price Range</h4>
+
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="price" value=""
+                           {% if not selected_price %}checked{% endif %}
+                           class="text-indigo-600 mr-3">
+                    <span class="text-gray-600">All Prices</span>
+                </label>
+
+                <label class="flex items-center">
+                    <input type="radio" name="price" value="0-20"
+                           {% if selected_price == "0-20" %}checked{% endif %}
+                           class="text-indigo-600 mr-3">
+                    <span class="text-gray-600">Under $20</span>
+                </label>
+
+                <label class="flex items-center">
+                    <input type="radio" name="price" value="20-50"
+                           {% if selected_price == "20-50" %}checked{% endif %}
+                           class="text-indigo-600 mr-3">
+                    <span class="text-gray-600">$20 - $50</span>
+                </label>
+
+                <label class="flex items-center">
+                    <input type="radio" name="price" value="50-100"
+                           {% if selected_price == "50-100" %}checked{% endif %}
+                           class="text-indigo-600 mr-3">
+                    <span class="text-gray-600">$50 - $100</span>
+                </label>
+
+                <label class="flex items-center">
+                    <input type="radio" name="price" value="100+"
+                           {% if selected_price == "100+" %}checked{% endif %}
+                           class="text-indigo-600 mr-3">
+                    <span class="text-gray-600">$100+</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="space-y-3">
+            <button type="submit"
+                    class="w-full btn-primary text-white py-3 rounded-lg font-medium">
+                Apply Filters
+            </button>
+
+            <a href="{% url 'product_list' %}"
+               class="block text-center w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50">
+                Reset All
+            </a>
+        </div>
+
+    </form>
+</div>
+</div>
+
+                    
+            
+            <!-- Products Grid -->
+            <div class="lg:w-3/4">
+                <!-- Sorting & View Options -->
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <div class="mb-4 md:mb-0">
+                            <span class="text-gray-600">Showing <span class="font-bold">{{ showing_count }}</span>
+                             of <span class="font-bold">{{ total_products }}</span> products</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <span class="text-gray-600 mr-3">Sort by:</span>
+                                <select class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option>Most Popular</option>
+                                    <option>Newest First</option>
+                                    <option>Price: Low to High</option>
+                                    <option>Price: High to Low</option>
+                                    <option>Best Rated</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="p-2 text-gray-600 hover:text-indigo-600">
+                                    <i class="fas fa-th-large text-lg"></i>
+                                </button>
+                                <button class="p-2 text-gray-400">
+                                    <i class="fas fa-list text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+               
+               
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for product in products %}
+    <div class="card-hover bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="relative">
+            {% if product.image %}
+    <img src="{{ product.image.url }}" class="h-48 w-full object-cover">
+{% else %}
+    <img src="{% static 'images/no-image.jfif' %}" class="h-48 w-full object-cover">
+{% endif %}
+
+
+            <div class="absolute top-3 left-3">
+                <span class="bg-white/90 text-indigo-700 text-xs font-semibold px-3 py-1 rounded-full">
+                    {{ product.category }}
+                </span>
+            </div>
+
+            {% if product.rating %}
+            <div class="absolute bottom-3 right-3">
+                <span class="bg-black/70 text-white text-sm font-medium px-3 py-1 rounded-full">
+                    <i class="fas fa-star text-yellow-400 mr-1"></i> {{ product.rating }}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="p-5">
+            <h3 class="font-bold text-lg mb-2 text-gray-800">
+                {{ product.title }}
+            </h3>
+
+            <p class="text-gray-600 text-sm mb-4">
+                {{ product.description|truncatechars:90 }}
+            </p>
+
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-2xl font-bold text-indigo-700">
+                        ${{ product.price }}
+                   
+                    </span>
+                    {% if product.old_price %}
+                    <span class="text-gray-500 text-sm line-through ml-2">
+                        ${{ product.old_price }}
+                    </span>
+
+                    {% endif %}
+                </div>
+    {% if product.id in approved_products %}
+
+    <a href="{% url 'download_project' product.id %}"
+       class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+        ⬇ Download
+    </a>
+
+{% else %}
+
+    <button disabled
+        class="bg-gray-300 text-gray-600 px-4 py-2 rounded-lg cursor-not-allowed">
+        🔒 Download
+    </button>
+
+    <button onclick="addToCart({{ product.id }})"
+        class="ml-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+        Buy
+    </button>
+
+{% endif %}
+
+
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-gray-500">No products available.</p>
+    {% endfor %}
+</div>
+
+
+                
+                <!-- Pagination -->
+                <div class="mt-12 flex justify-center">
+                    <nav class="flex items-center space-x-2">
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-indigo-600 text-white font-medium">1</button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50">2</button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50">3</button>
+                        <span class="text-gray-500">...</span>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50">10</button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </nav>
+                </div>
+                
+                <!-- CTA Section -->
+                <div class="mt-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-center text-white">
+                    <h3 class="text-2xl font-bold mb-4">Ready to Sell Your Digital Project?</h3>
+                    <p class="text-white/90 mb-6 max-w-2xl mx-auto">Join thousands of creators earning from their digital products. No upfront costs, just start selling!</p>
+                    <a href="/sell/" class="inline-block bg-white text-indigo-700 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition">
+                        <i class="fas fa-upload mr-2"></i> Start Selling Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   
+</script>
+{% endblock %}
